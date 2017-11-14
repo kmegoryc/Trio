@@ -8,7 +8,7 @@
  * Receive pin is the sensor pin - try different amounts of foil/metal on this pin
  */
  
-const int TRIGGER_THRESHOLD = 125; 
+const int TRIGGER_THRESHOLD = 50; 
  
 const int NUMBER_OF_TRIGGERS = 3;
 
@@ -24,8 +24,6 @@ boolean currentStates[NUMBER_OF_TRIGGERS] = {LOW,LOW,LOW};
 
 boolean lastStates[NUMBER_OF_TRIGGERS] = {LOW,LOW,LOW};
 
-int timecheck = millis();
-
 CapacitiveSensor sensors[NUMBER_OF_TRIGGERS] = { 
   CapacitiveSensor(2,3),
   CapacitiveSensor(2,4),
@@ -35,27 +33,25 @@ CapacitiveSensor sensors[NUMBER_OF_TRIGGERS] = {
 void setup()                    
 {
    Serial.begin(9600);
+   Serial.println("got it");
 }
 
 void loop()                    
 {
   for (int i=0; i<NUMBER_OF_TRIGGERS; i++) {
     int thisSensorReading = sensors[i].capacitiveSensor(30);
+    Serial.println(thisSensorReading);
     boolean thisSensorIsTouched = thisSensorReading > TRIGGER_THRESHOLD;
     
     currentStates[i] = thisSensorIsTouched;
     
     if (currentStates[i] == HIGH && lastStates[i] == LOW){//if button has just been pressed
-      if(millis() - timecheck >= 50)
-      {
-        MIDImessage(noteONs[i], noteNums[i], 127);//turn note on with 127 velocity
-        Serial.println("pressed");
-//        delay(2);//crude form of button debouncing
-        timecheck = millis();
-      }
-      
+      Serial.println(i + "was pressed");
+      MIDImessage(noteONs[i], noteNums[i], 127);//turn note on with 127 velocity
+      delay(2);//crude form of button debouncing
     } 
     else if(currentStates[i] == LOW && lastStates[i] == HIGH){
+      Serial.println(i + "was turned off");
       MIDImessage(noteONs[i], noteNums[i], 0);//turn note off
       delay(2);//crude form of button debouncing
     }

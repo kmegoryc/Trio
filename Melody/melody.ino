@@ -1,5 +1,3 @@
-#include <CurieBLE.h>
-
 #define TXRX_BUF_LEN              20 //max number of bytes
 #define RX_BUF_LEN                20 //max number of bytes
 uint8_t rx_buf[RX_BUF_LEN];
